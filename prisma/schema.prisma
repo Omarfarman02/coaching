@@ -1,0 +1,43 @@
+datasource db {
+  provider = "postgresql"   // or sqlite, depending on your choice
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Coach {
+  id       Int     @id @default(autoincrement())
+  name     String
+  phone    String
+  slots    Slot[]
+  reviews  Review[]
+}
+
+model Student {
+  id       Int     @id @default(autoincrement())
+  name     String
+  phone    String
+  bookings Slot[]
+}
+
+model Slot {
+  id         Int       @id @default(autoincrement())
+  startTime  DateTime
+  endTime    DateTime
+  coachId    Int
+  studentId  Int?
+  coach      Coach     @relation(fields: [coachId], references: [id])
+  student    Student?  @relation(fields: [studentId], references: [id])
+}
+
+model Review {
+  id        Int     @id @default(autoincrement())
+  rating    Int
+  notes     String?
+  coachId   Int
+  studentId Int
+  coach     Coach   @relation(fields: [coachId], references: [id])
+  student   Student @relation(fields: [studentId], references: [id])
+}
